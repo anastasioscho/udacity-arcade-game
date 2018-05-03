@@ -1,3 +1,14 @@
+var nextEnemyRow = 1;
+
+function generateRandomNumber(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function generateRandomSpeed() {
+    const speeds = [100, 150, 200, 250, 300, 350, 400];
+    return speeds[generateRandomNumber(0, speeds.length - 1)];
+}
+
 // Enemies our player must avoid
 class Enemy {
     constructor() {
@@ -6,6 +17,7 @@ class Enemy {
 
         // The image/sprite for our enemies, this uses
         // a helper we've provided to easily load images
+        this.resetPositionAndSpeed();
         this.sprite = 'images/enemy-bug.png';
     }
 
@@ -15,6 +27,16 @@ class Enemy {
         // You should multiply any movement by the dt parameter
         // which will ensure the game runs at the same speed for
         // all computers.
+        this.x += this.speed * dt;
+        if (this.x >= 505) this.resetPositionAndSpeed();
+    }
+
+    resetPositionAndSpeed() {
+        this.speed = generateRandomSpeed();
+        this.x = -(generateRandomNumber(1, 3) * 101);
+        this.y = (nextEnemyRow * 83) - 30;
+
+        nextEnemyRow = nextEnemyRow === 3 ? nextEnemyRow = 1 : nextEnemyRow += 1;
     }
 
     // Draw the enemy on the screen, required method for game
@@ -61,7 +83,7 @@ class Player {
 // Place the player object in a variable called player
 
 const player = new Player;
-const allEnemies = []; // TODO: Create the enemies
+const allEnemies = [new Enemy, new Enemy, new Enemy];
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
