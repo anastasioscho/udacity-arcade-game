@@ -26,16 +26,30 @@ Enemy.prototype.render = function() {
 // a handleInput() method.
 
 class Player {
+    constructor({row = 5, col = 2} = {}) {
+        this.x = col * 101;
+        this.y = (row * 83 - 30);
+        this.sprite = 'images/char-boy.png';
+    }
+
     update() {
         // TODO: Implement it
     }
 
     render() {
-        // TODO: Implement it
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 
-    handleInput() {
-        // TODO: Implement it
+    handleInput(direction) {
+        if (direction === 'left' && this.x > 0) {
+            this.x -= 101;
+        } else if (direction === 'right' && this.x < 4 * 101) {
+            this.x += 101;
+        } else if (direction === 'up' && this.y > 0) {
+            this.y -= 83;
+        } else if (direction === 'down' && this.y < 5 * 83 - 30) {
+            this.y += 83;
+        }
     }
 }
 
