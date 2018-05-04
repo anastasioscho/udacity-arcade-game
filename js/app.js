@@ -150,7 +150,7 @@ class Player {
 
     increaseWins() {
         this.wins += 1;
-        if (this.wins % 3 === 0 && allEnemies.length < 7) {
+        if (this.wins % 3 === 0 && allEnemies.length < 6) {
             allEnemies.push(new Enemy);
         }
     }
