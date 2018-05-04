@@ -1,5 +1,3 @@
-const powerUpsPoints = [10, 20, 30];
-
 var nextEnemyRow = 1;
 var handlingCollision = false;
 var handlingFinishingEvent = false;
@@ -8,15 +6,6 @@ var score = 0;
 
 function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function generateRandomSpeed() {
-    const speeds = [100, 150, 200, 250, 300, 350, 400];
-    return speeds[generateRandomNumber(0, speeds.length - 1)];
-}
-
-function generateRandomPowerUpPoints() {
-    return powerUpsPoints[generateRandomNumber(0, powerUpsPoints.length - 1)];
 }
 
 function updateScore(newPoints) {
@@ -53,13 +42,8 @@ function restartGame() {
     player.reset();
     showHearts(true);
 
-    for (let enemy of allEnemies) {
-        enemy.resetPositionAndSpeed();
-    }
-
-    while (allEnemies.length > 3) {
-        allEnemies.pop();
-    }
+    for (let enemy of allEnemies) enemy.resetPositionAndSpeed();
+    while (allEnemies.length > 3) allEnemies.pop();
 
     powerUp.reset();
 
@@ -84,7 +68,7 @@ class Enemy {
 
             if (this.isColliding()) {
                 handlingCollision = true;
-                setTimeout(function() {
+                setTimeout(() => {
                     handlingCollision = false;
                     player.looseHeart();
                     player.resetPosition();
@@ -94,7 +78,8 @@ class Enemy {
     }
 
     resetPositionAndSpeed() {
-        this.speed = generateRandomSpeed();
+        const possibleSpeeds = [100, 150, 200, 250, 300, 350, 400];
+        this.speed = possibleSpeeds[generateRandomNumber(0, possibleSpeeds.length - 1)];
         this.x = -(generateRandomNumber(1, 3) * 101);
         this.y = (nextEnemyRow * 83) - 30;
 
@@ -137,7 +122,7 @@ class Player {
                     updateScore(50);
                     this.increaseWins();
                     handlingFinishingEvent = true;
-                    setTimeout(function() {
+                    setTimeout(() => {
                         handlingFinishingEvent = false;
                         player.resetPosition();
                     }, 400);
@@ -147,13 +132,7 @@ class Player {
                 this.y += 83;
             }
 
-            if (this.row === powerUp.row && this.col === powerUp.col) {
-                updateScore(powerUp.points);
-                powerUp.hide();
-                setTimeout(() => {
-                    if (!isGameOver) powerUp.reset();
-                }, 2000);
-            }
+            if (this.row === powerUp.row && this.col === powerUp.col) powerUp.pickUp();
         }
     }
 
@@ -205,11 +184,20 @@ class PowerUp {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 
-    reset() {
-        this.points = generateRandomPowerUpPoints();
+    pickUp() {
+        this.x = -500;
+        updateScore(this.points);
+        setTimeout(() => {
+            if (!isGameOver) this.reset();
+        }, 2000);
+    }
 
-        if (this.points === powerUpsPoints[0]) this.sprite = 'images/blue-gem.png';
-        else if (this.points === powerUpsPoints[1]) this.sprite = 'images/green-gem.png';
+    reset() {
+        const possiblePoints = [10, 20, 30];
+        this.points = possiblePoints[generateRandomNumber(0, possiblePoints.length - 1)];
+
+        if (this.points === possiblePoints[0]) this.sprite = 'images/blue-gem.png';
+        else if (this.points === possiblePoints[1]) this.sprite = 'images/green-gem.png';
         else this.sprite = 'images/orange-gem.png';
 
         const row = generateRandomNumber(1, 3);
@@ -225,10 +213,6 @@ class PowerUp {
 
     get col() {
         return (this.x - 25) / 101;
-    }
-
-    hide() {
-        this.x = -500
     }
 }
 
