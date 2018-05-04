@@ -1,4 +1,5 @@
 var nextEnemyRow = 1;
+var handlingCollision = false;
 
 function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -27,8 +28,18 @@ class Enemy {
         // You should multiply any movement by the dt parameter
         // which will ensure the game runs at the same speed for
         // all computers.
-        this.x += this.speed * dt;
-        if (this.x >= 505) this.resetPositionAndSpeed();
+        if (!handlingCollision) {
+            this.x += this.speed * dt;
+            if (this.x >= 505) this.resetPositionAndSpeed();
+
+            if (this.isColliding()) {
+                handlingCollision = true;
+                setTimeout(function() {
+                    handlingCollision = false;
+                    player.resetPosition();
+                }, 800);
+            }
+        }
     }
 
     resetPositionAndSpeed() {
@@ -42,6 +53,10 @@ class Enemy {
     // Draw the enemy on the screen, required method for game
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+
+    isColliding() {
+        return (!(this.x + 101 - 30 < player.x || this.x + 30 > player.x + 101) && this.y === player.y);
     }
 }
 
@@ -65,15 +80,22 @@ class Player {
     }
 
     handleInput(direction) {
-        if (direction === 'left' && this.x > 0) {
-            this.x -= 101;
-        } else if (direction === 'right' && this.x < 4 * 101) {
-            this.x += 101;
-        } else if (direction === 'up' && this.y > 0) {
-            this.y -= 83;
-        } else if (direction === 'down' && this.y < 5 * 83 - 30) {
-            this.y += 83;
+        if (!handlingCollision) {
+            if (direction === 'left' && this.x > 0) {
+                this.x -= 101;
+            } else if (direction === 'right' && this.x < 4 * 101) {
+                this.x += 101;
+            } else if (direction === 'up' && this.y > 0) {
+                this.y -= 83;
+            } else if (direction === 'down' && this.y < 5 * 83 - 30) {
+                this.y += 83;
+            }
         }
+    }
+
+    resetPosition() {
+        this.x = 2 * 101;
+        this.y = (5 * 83 - 30);
     }
 }
 
