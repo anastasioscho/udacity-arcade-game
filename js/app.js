@@ -1,5 +1,6 @@
 var nextEnemyRow = 1;
 var handlingCollision = false;
+var handlingFinishingEvent = false;
 
 function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -80,13 +81,20 @@ class Player {
     }
 
     handleInput(direction) {
-        if (!handlingCollision) {
+        if (!handlingCollision && !handlingFinishingEvent) {
             if (direction === 'left' && this.x > 0) {
                 this.x -= 101;
             } else if (direction === 'right' && this.x < 4 * 101) {
                 this.x += 101;
             } else if (direction === 'up' && this.y > 0) {
                 this.y -= 83;
+                if (this.row === 0) {
+                    handlingFinishingEvent = true;
+                    setTimeout(function() {
+                        handlingFinishingEvent = false;
+                        player.resetPosition();
+                    }, 400);
+                }
             } else if (direction === 'down' && this.y < 5 * 83 - 30) {
                 this.y += 83;
             }
@@ -96,6 +104,10 @@ class Player {
     resetPosition() {
         this.x = 2 * 101;
         this.y = (5 * 83 - 30);
+    }
+
+    get row() {
+        return (this.y + 30) / 83;
     }
 }
 
