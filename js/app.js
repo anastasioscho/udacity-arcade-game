@@ -1,6 +1,7 @@
 var nextEnemyRow = 1;
 var handlingCollision = false;
 var handlingFinishingEvent = false;
+var isGameOver = false;
 var score = 0;
 
 function generateRandomNumber(min, max) {
@@ -15,6 +16,41 @@ function generateRandomSpeed() {
 function updateScore(newPoints) {
     score = score + newPoints < 0 ? 0 : score + newPoints;
     console.log(`Score: ${score}`);
+}
+
+function toggleModal() {
+    const modal = document.querySelector(".modal");
+    modal.classList.toggle("show-modal");
+}
+
+function showHearts() {
+    const firstHeartElement = document.querySelector("#first-heart");
+    const secondHeartElement = document.querySelector("#second-heart");
+    const thirdHeartElement = document.querySelector("#third-heart");
+
+    if (player.hearts === 3) {
+        firstHeartElement.style.display = "list-item";
+        secondHeartElement.style.display = "list-item";
+        thirdHeartElement.style.display = "list-item";
+    } else if (player.hearts === 2) thirdHeartElement.style.display = "none";
+    else if (player.hearts === 1) secondHeartElement.style.display = "none";
+    else if (player.hearts === 0) firstHeartElement.style.display = "none";
+}
+
+function restartGame() {
+    nextEnemyRow = 1;
+    handlingCollision = false;
+    handlingFinishingEvent = false;
+    score = 0;
+
+    player.reset();
+    showHearts(true);
+
+    for (let enemy of allEnemies) {
+        enemy.resetPositionAndSpeed();
+    }
+
+    isGameOver = false;
 }
 
 // Enemies our player must avoid
@@ -35,7 +71,7 @@ class Enemy {
         // You should multiply any movement by the dt parameter
         // which will ensure the game runs at the same speed for
         // all computers.
-        if (!handlingCollision) {
+        if (!handlingCollision && !isGameOver) {
             this.x += this.speed * dt;
             if (this.x >= 505) this.resetPositionAndSpeed();
 
@@ -43,6 +79,7 @@ class Enemy {
                 handlingCollision = true;
                 setTimeout(function() {
                     handlingCollision = false;
+                    player.looseHeart();
                     player.resetPosition();
                 }, 800);
             }
@@ -72,9 +109,8 @@ class Enemy {
 // a handleInput() method.
 
 class Player {
-    constructor({row = 5, col = 2} = {}) {
-        this.x = col * 101;
-        this.y = (row * 83 - 30);
+    constructor() {
+        this.reset();
         this.sprite = 'images/char-boy.png';
     }
 
@@ -87,7 +123,7 @@ class Player {
     }
 
     handleInput(direction) {
-        if (!handlingCollision && !handlingFinishingEvent) {
+        if (!handlingCollision && !handlingFinishingEvent && !isGameOver) {
             if (direction === 'left' && this.x > 0) {
                 this.x -= 101;
             } else if (direction === 'right' && this.x < 4 * 101) {
@@ -108,6 +144,23 @@ class Player {
                 this.y += 83;
             }
         }
+    }
+
+    looseHeart() {
+        this.hearts -= 1;
+        showHearts();
+
+        if (this.hearts === 0) {
+            isGameOver = true;
+            const scoreElement = document.querySelector("#score");
+            scoreElement.textContent = `You got ${score} points though. Well done!`;
+            toggleModal();
+        }
+    }
+
+    reset() {
+        this.resetPosition();
+        this.hearts = 3;
     }
 
     resetPosition() {
