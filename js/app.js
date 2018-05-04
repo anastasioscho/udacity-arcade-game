@@ -1,6 +1,7 @@
 var nextEnemyRow = 1;
 var handlingCollision = false;
 var handlingFinishingEvent = false;
+var score = 0;
 
 function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
@@ -9,6 +10,11 @@ function generateRandomNumber(min, max) {
 function generateRandomSpeed() {
     const speeds = [100, 150, 200, 250, 300, 350, 400];
     return speeds[generateRandomNumber(0, speeds.length - 1)];
+}
+
+function updateScore(newPoints) {
+    score = score + newPoints < 0 ? 0 : score + newPoints;
+    console.log(`Score: ${score}`);
 }
 
 // Enemies our player must avoid
@@ -87,8 +93,10 @@ class Player {
             } else if (direction === 'right' && this.x < 4 * 101) {
                 this.x += 101;
             } else if (direction === 'up' && this.y > 0) {
+                updateScore(10);
                 this.y -= 83;
                 if (this.row === 0) {
+                    updateScore(50);
                     handlingFinishingEvent = true;
                     setTimeout(function() {
                         handlingFinishingEvent = false;
@@ -96,6 +104,7 @@ class Player {
                     }, 400);
                 }
             } else if (direction === 'down' && this.y < 5 * 83 - 30) {
+                updateScore(-10);
                 this.y += 83;
             }
         }
@@ -110,7 +119,6 @@ class Player {
         return (this.y + 30) / 83;
     }
 }
-
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
