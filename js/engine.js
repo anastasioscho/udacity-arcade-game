@@ -154,6 +154,7 @@ var Engine = (function(global) {
         });
 
         player.render();
+        powerUp.render();
     }
 
     /* This function does nothing but it could have been a good place to
@@ -173,7 +174,10 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/blue-gem.png',
+        'images/green-gem.png',
+        'images/orange-gem.png'
     ]);
     Resources.onReady(init);
 

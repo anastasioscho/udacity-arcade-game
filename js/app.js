@@ -1,3 +1,5 @@
+const powerUpsPoints = [10, 20, 30];
+
 var nextEnemyRow = 1;
 var handlingCollision = false;
 var handlingFinishingEvent = false;
@@ -11,6 +13,10 @@ function generateRandomNumber(min, max) {
 function generateRandomSpeed() {
     const speeds = [100, 150, 200, 250, 300, 350, 400];
     return speeds[generateRandomNumber(0, speeds.length - 1)];
+}
+
+function generateRandomPowerUpPoints() {
+    return powerUpsPoints[generateRandomNumber(0, powerUpsPoints.length - 1)];
 }
 
 function updateScore(newPoints) {
@@ -59,6 +65,8 @@ function restartGame() {
     while (allEnemies.length > 3) {
         allEnemies.pop();
     }
+
+    powerUp.reset();
 
     isGameOver = false;
 }
@@ -154,6 +162,14 @@ class Player {
                 updateScore(-10);
                 this.y += 83;
             }
+
+            if (this.row === powerUp.row && this.col === powerUp.col) {
+                updateScore(powerUp.points);
+                powerUp.hide();
+                setTimeout(() => {
+                    if (!isGameOver) powerUp.reset();
+                }, 2000);
+            }
         }
     }
 
@@ -190,12 +206,53 @@ class Player {
     get row() {
         return (this.y + 30) / 83;
     }
+
+    get col() {
+        return this.x / 101;
+    }
+}
+
+class PowerUp {
+    constructor() {
+        this.reset();
+    }
+
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+
+    reset() {
+        this.points = generateRandomPowerUpPoints();
+
+        if (this.points === powerUpsPoints[0]) this.sprite = 'images/blue-gem.png';
+        else if (this.points === powerUpsPoints[1]) this.sprite = 'images/green-gem.png';
+        else this.sprite = 'images/orange-gem.png';
+
+        const row = generateRandomNumber(1, 3);
+        const col = generateRandomNumber(0, 4);
+
+        this.x = (col * 101) + 25;
+        this.y = (row * 83) + 35;
+    }
+
+    get row() {
+        return (this.y - 35) / 83;
+    }
+
+    get col() {
+        return (this.x - 25) / 101;
+    }
+
+    hide() {
+        this.x = -500
+    }
 }
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 
+const powerUp = new PowerUp;
 const player = new Player;
 const allEnemies = [new Enemy, new Enemy, new Enemy];
 
