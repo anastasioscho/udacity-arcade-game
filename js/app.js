@@ -56,6 +56,10 @@ function restartGame() {
         enemy.resetPositionAndSpeed();
     }
 
+    while (allEnemies.length > 3) {
+        allEnemies.pop();
+    }
+
     isGameOver = false;
 }
 
@@ -139,6 +143,7 @@ class Player {
                 this.y -= 83;
                 if (this.row === 0) {
                     updateScore(50);
+                    this.increaseWins();
                     handlingFinishingEvent = true;
                     setTimeout(function() {
                         handlingFinishingEvent = false;
@@ -164,8 +169,16 @@ class Player {
         }
     }
 
+    increaseWins() {
+        this.wins += 1;
+        if (this.wins % 3 === 0 && allEnemies.length < 7) {
+            allEnemies.push(new Enemy);
+        }
+    }
+
     reset() {
         this.resetPosition();
+        this.wins = 0;
         this.hearts = 3;
     }
 
