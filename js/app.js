@@ -15,7 +15,7 @@ function generateRandomSpeed() {
 
 function updateScore(newPoints) {
     score = score + newPoints < 0 ? 0 : score + newPoints;
-    console.log(`Score: ${score}`);
+    showScore();
 }
 
 function toggleModal() {
@@ -37,11 +37,17 @@ function showHearts() {
     else if (player.hearts === 0) firstHeartElement.style.display = "none";
 }
 
+function showScore() {
+    const scoreElement = document.querySelector("#score-element");
+    scoreElement.textContent = `${score} points`;
+}
+
 function restartGame() {
     nextEnemyRow = 1;
     handlingCollision = false;
     handlingFinishingEvent = false;
     score = 0;
+    showScore();
 
     player.reset();
     showHearts(true);

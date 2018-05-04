@@ -16,6 +16,13 @@ body {
     text-align: center;
 }
 
+h1 {
+    margin: 0 0 1rem 0;
+    font-family: 'arcaderegular';
+    font-size: 4rem;
+    color: #2e3d49;
+}
+
 .hearts {
     padding: 0;
     display: flex;
