@@ -162,10 +162,6 @@ class Player {
         return this.x / 101;
     }
 
-    update() {
-        // TODO: Implement it
-    }
-
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
