@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Effective JavaScript: Frogger</title>
+    <title>Arcade Game</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -10,17 +10,19 @@
         <div class="modal-content">
             <h1>Sadly, you have been consumed by the swarm...</h1>
             <p id="score"></p>
-            <button class="btn-restart" onclick="toggleModal(); restartGame()">No, i did not</button>
+            <button class="btn-restart" onclick="toggleModal(); restartGame()">Play again</button>
         </div>
     </div>
     <script src="js/resources.js"></script>
     <script src="js/app.js"></script>
     <script src="js/engine.js"></script>
-    <h1 id="score-element">0 points</h1>
-    <ul class="hearts">
-        <li><img id="first-heart" src="images/Heart.png"></li>
-        <li><img id="second-heart" src="images/Heart.png"></li>
-        <li><img id="third-heart" src="images/Heart.png"></li>
-    </ul>
+    <section id="panel">
+        <h1 id="score-element">Score:0</h1>
+        <ul class="hearts">
+            <li><img id="first-heart" src="images/Heart.png"></li>
+            <li><img id="second-heart" src="images/Heart.png"></li>
+            <li><img id="third-heart" src="images/Heart.png"></li>
+        </ul>
+    </section>
 </body>
 </html>
