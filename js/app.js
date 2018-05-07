@@ -61,6 +61,19 @@ class Enemy {
         this.sprite = 'images/enemy-bug.png';
     }
 
+    resetPositionAndSpeed() {
+        const possibleSpeeds = [100, 150, 200, 250, 300, 350, 400];
+        this.speed = possibleSpeeds[generateRandomNumber(0, possibleSpeeds.length - 1)];
+        this.x = -(generateRandomNumber(1, 3) * 101);
+        this.y = (nextEnemyRow * 83) - 30;
+
+        nextEnemyRow = nextEnemyRow === 3 ? nextEnemyRow = 1 : nextEnemyRow += 1;
+    }
+
+    isColliding() {
+        return (!(this.x + 101 - 30 < player.x || this.x + 30 > player.x + 101) && this.y === player.y);
+    }
+
     update(dt) {
         if (!handlingCollision && !isGameOver) {
             this.x += this.speed * dt;
@@ -77,21 +90,8 @@ class Enemy {
         }
     }
 
-    resetPositionAndSpeed() {
-        const possibleSpeeds = [100, 150, 200, 250, 300, 350, 400];
-        this.speed = possibleSpeeds[generateRandomNumber(0, possibleSpeeds.length - 1)];
-        this.x = -(generateRandomNumber(1, 3) * 101);
-        this.y = (nextEnemyRow * 83) - 30;
-
-        nextEnemyRow = nextEnemyRow === 3 ? nextEnemyRow = 1 : nextEnemyRow += 1;
-    }
-
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-
-    isColliding() {
-        return (!(this.x + 101 - 30 < player.x || this.x + 30 > player.x + 101) && this.y === player.y);
     }
 }
 
@@ -101,39 +101,15 @@ class Player {
         this.sprite = 'images/char-boy.png';
     }
 
-    update() {
-        // TODO: Implement it
+    reset() {
+        this.resetPosition();
+        this.wins = 0;
+        this.hearts = 3;
     }
 
-    render() {
-        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-    }
-
-    handleInput(direction) {
-        if (!handlingCollision && !handlingFinishingEvent && !isGameOver) {
-            if (direction === 'left' && this.x > 0) {
-                this.x -= 101;
-            } else if (direction === 'right' && this.x < 4 * 101) {
-                this.x += 101;
-            } else if (direction === 'up' && this.y > 0) {
-                updateScore(10);
-                this.y -= 83;
-                if (this.row === 0) {
-                    updateScore(50);
-                    this.increaseWins();
-                    handlingFinishingEvent = true;
-                    setTimeout(() => {
-                        handlingFinishingEvent = false;
-                        player.resetPosition();
-                    }, 400);
-                }
-            } else if (direction === 'down' && this.y < 5 * 83 - 30) {
-                updateScore(-10);
-                this.y += 83;
-            }
-
-            if (this.row === powerUp.row && this.col === powerUp.col) powerUp.pickUp();
-        }
+    resetPosition() {
+        this.x = 2 * 101;
+        this.y = (5 * 83 - 30);
     }
 
     looseHeart() {
@@ -155,15 +131,31 @@ class Player {
         }
     }
 
-    reset() {
-        this.resetPosition();
-        this.wins = 0;
-        this.hearts = 3;
-    }
+    handleInput(direction) {
+        if (!handlingCollision && !handlingFinishingEvent && !isGameOver) {
+            if (direction === 'left' && this.x > 0) {
+                this.x -= 101;
+            } else if (direction === 'right' && this.x < 4 * 101) {
+                this.x += 101;
+            } else if (direction === 'up' && this.y > 0) {
+                this.y -= 83;
+                updateScore(10);
+                if (this.row === 0) {
+                    updateScore(50);
+                    this.increaseWins();
+                    handlingFinishingEvent = true;
+                    setTimeout(() => {
+                        handlingFinishingEvent = false;
+                        player.resetPosition();
+                    }, 400);
+                }
+            } else if (direction === 'down' && this.y < 5 * 83 - 30) {
+                this.y += 83;
+                updateScore(-10);
+            }
 
-    resetPosition() {
-        this.x = 2 * 101;
-        this.y = (5 * 83 - 30);
+            if (this.row === powerUp.row && this.col === powerUp.col) powerUp.pickUp();
+        }
     }
 
     get row() {
@@ -173,23 +165,19 @@ class Player {
     get col() {
         return this.x / 101;
     }
-}
 
-class PowerUp {
-    constructor() {
-        this.reset();
+    update() {
+        // TODO: Implement it
     }
 
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
+}
 
-    pickUp() {
-        this.x = -500;
-        updateScore(this.points);
-        setTimeout(() => {
-            if (!isGameOver) this.reset();
-        }, 2000);
+class PowerUp {
+    constructor() {
+        this.reset();
     }
 
     reset() {
@@ -207,12 +195,24 @@ class PowerUp {
         this.y = (row * 83) + 35;
     }
 
+    pickUp() {
+        this.x = -500;
+        updateScore(this.points);
+        setTimeout(() => {
+            if (!isGameOver) this.reset();
+        }, 2000);
+    }
+
     get row() {
         return (this.y - 35) / 83;
     }
 
     get col() {
         return (this.x - 25) / 101;
+    }
+
+    render() {
+        ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
     }
 }
 
