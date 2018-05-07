@@ -8,12 +8,9 @@ function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-function updateScore(newPoints) {
-    score = score + newPoints < 0 ? 0 : score + newPoints;
-    showScore();
-}
-
-function showScore() {
+function updateScore(newPoints, addition = true) {
+    if (addition) score = score + newPoints < 0 ? 0 : score + newPoints;
+    else score = newPoints;
     const scoreElement = document.querySelector("#score-element");
     scoreElement.textContent = `${score} points`;
 }
@@ -36,11 +33,10 @@ function restartGame() {
     nextEnemyRow = 1;
     handlingCollision = false;
     handlingFinishingEvent = false;
-    score = 0;
-    showScore();
+    updateScore(0, false);
 
     player.reset();
-    showHearts(true);
+    showHearts();
 
     for (let enemy of allEnemies) enemy.resetPositionAndSpeed();
     while (allEnemies.length > 3) allEnemies.pop();
