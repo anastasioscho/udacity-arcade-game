@@ -4,9 +4,22 @@ var handlingFinishingEvent = false;
 var isGamePaused = true;
 var score = 0;
 
+/**
+* @description Generates a random number
+* @param {number} min
+* @param {number} max
+* @returns {number} A random number between min and max
+*/
+
 function generateRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
+
+/**
+* @description Updates the score and shows it on the screen
+* @param {number} newPoints
+* @param {boolean} addition - If true, newPoints is added to the current score
+*/
 
 function updateScore(newPoints, addition = true) {
     if (addition) score = score + newPoints < 0 ? 0 : score + newPoints;
@@ -15,6 +28,10 @@ function updateScore(newPoints, addition = true) {
     const scoreElement = document.querySelector('#score-element');
     scoreElement.textContent = `Score:${score}`;
 }
+
+/**
+* @description Shows the player's hearts on the screen
+*/
 
 function showHearts() {
     const firstHeartElement = document.querySelector('#first-heart');
@@ -63,11 +80,16 @@ function toggleAvatarSelectionModal() {
 }
 
 class Enemy {
+    /**
+    * @description Represents an Enemy
+    * @constructor
+    */
+
     constructor() {
         this.resetPositionAndSpeed();
 
+        // Pick a random image for the enemy
         const spriteColor = generateRandomNumber(0, 2);
-        
         if (spriteColor === 0) this.sprite = 'images/enemy-bug.png';
         else if (spriteColor === 1) this.sprite = 'images/enemy-bug-green.png';
         else this.sprite = 'images/enemy-bug-purple.png';
@@ -89,8 +111,9 @@ class Enemy {
     update(dt) {
         if (!handlingCollision && !isGamePaused) {
             this.x += this.speed * dt;
-            if (this.x >= 505) this.resetPositionAndSpeed();
+            if (this.x >= 505) this.resetPositionAndSpeed(); // The enemy goes offscreen
 
+            // If the enemy collides with the player's avatar, pause the later for 800ms and then reset it's position
             if (this.isColliding()) {
                 handlingCollision = true;
                 setTimeout(() => {
@@ -108,6 +131,11 @@ class Enemy {
 }
 
 class Player {
+    /**
+    * @description Represents the player
+    * @constructor
+    */
+
     constructor() {
         this.reset();
         this.sprite = 'images/char-boy.png';
@@ -155,6 +183,8 @@ class Player {
                 if (this.row === 0) {
                     updateScore(50);
                     this.increaseWins();
+
+                    // If the player's avatar reaches the water, pause it for 400ms and then reset it's position
                     handlingFinishingEvent = true;
                     setTimeout(() => {
                         handlingFinishingEvent = false;
@@ -184,6 +214,11 @@ class Player {
 }
 
 class PowerUp {
+    /**
+    * @description Represents a gem
+    * @constructor
+    */
+
     constructor() {
         this.reset();
     }
@@ -204,6 +239,7 @@ class PowerUp {
     }
 
     pickUp() {
+        // Hide the gem, update the score and then reset it's position after 2s
         this.x = -500;
         updateScore(this.points);
         setTimeout(() => {
