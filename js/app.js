@@ -71,7 +71,12 @@ function toggleModalAvatarSelection() {
 class Enemy {
     constructor() {
         this.resetPositionAndSpeed();
-        this.sprite = 'images/enemy-bug.png';
+
+        const spriteColor = generateRandomNumber(0, 2);
+        
+        if (spriteColor === 0) this.sprite = 'images/enemy-bug.png';
+        else if (spriteColor === 1) this.sprite = 'images/enemy-bug-green.png';
+        else this.sprite = 'images/enemy-bug-purple.png';
     }
 
     resetPositionAndSpeed() {
