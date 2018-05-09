@@ -1,8 +1,8 @@
-var nextEnemyRow = 1;
-var handlingCollision = false;
-var handlingFinishingEvent = false;
-var isGamePaused = true;
-var score = 0;
+let nextEnemyRow = 1;
+let handlingCollision = false;
+let handlingFinishingEvent = false;
+let isGamePaused = true;
+let score = 0;
 
 /**
 * @description Generates a random number
