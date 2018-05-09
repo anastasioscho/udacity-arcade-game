@@ -63,7 +63,7 @@ function restartGame() {
     player.reset();
     showHearts();
 
-    for (let enemy of allEnemies) enemy.resetPositionAndSpeed();
+    for (let enemy of allEnemies) enemy.reset();
     while (allEnemies.length > 3) allEnemies.pop();
 
     powerUp.reset();
@@ -86,21 +86,21 @@ class Enemy {
     */
 
     constructor() {
-        this.resetPositionAndSpeed();
-
-        // Pick a random image for the enemy
-        const spriteColor = generateRandomNumber(0, 2);
-        if (spriteColor === 0) this.sprite = 'images/enemy-bug.png';
-        else if (spriteColor === 1) this.sprite = 'images/enemy-bug-green.png';
-        else this.sprite = 'images/enemy-bug-purple.png';
+        this.reset();
     }
 
-    resetPositionAndSpeed() {
+    /**
+    * @description Resets the image, speed and position
+    */
+
+    reset() {
+        this.sprite = this.generateRandomImage();
+
         const possibleSpeeds = [100, 150, 200, 250, 300, 350, 400];
         this.speed = possibleSpeeds[generateRandomNumber(0, possibleSpeeds.length - 1)];
+
         this.x = -(generateRandomNumber(1, 3) * 101);
         this.y = (nextEnemyRow * 83) - 30;
-
         nextEnemyRow = nextEnemyRow === 3 ? nextEnemyRow = 1 : nextEnemyRow += 1;
     }
 
@@ -111,7 +111,7 @@ class Enemy {
     update(dt) {
         if (!handlingCollision && !isGamePaused) {
             this.x += this.speed * dt;
-            if (this.x >= 505) this.resetPositionAndSpeed(); // The enemy goes offscreen
+            if (this.x >= 505) this.reset(); // The enemy goes offscreen
 
             // If the enemy collides with the player's avatar, pause the later for 800ms and then reset it's position
             if (this.isColliding()) {
@@ -127,6 +127,15 @@ class Enemy {
 
     render() {
         ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    }
+
+    generateRandomImage() {
+        const spriteImage = generateRandomNumber(0, 2);
+
+        if (spriteImage === 0) return 'images/enemy-bug.png';
+        else if (spriteImage === 1) return 'images/enemy-bug-green.png';
+
+        return 'images/enemy-bug-purple.png';
     }
 }
 
