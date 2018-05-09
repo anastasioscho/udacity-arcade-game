@@ -1,7 +1,7 @@
 var nextEnemyRow = 1;
 var handlingCollision = false;
 var handlingFinishingEvent = false;
-var isGameOver = false;
+var isGamePaused = true;
 var score = 0;
 
 function generateRandomNumber(min, max) {
@@ -12,7 +12,7 @@ function updateScore(newPoints, addition = true) {
     if (addition) score = score + newPoints < 0 ? 0 : score + newPoints;
     else score = newPoints;
     const scoreElement = document.querySelector("#score-element");
-    scoreElement.textContent = `${score} points`;
+    scoreElement.textContent = `Score:${score}`;
 }
 
 function showHearts() {
@@ -29,7 +29,21 @@ function showHearts() {
     else if (player.hearts === 0) firstHeartElement.style.display = "none";
 }
 
+function avatarClicked(evt) {
+    player.sprite = evt.target.dataset.sprite;
+    toggleModalAvatarSelection();
+    isGamePaused = false;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    restartGame();
+
+    const avatars = document.querySelector('.avatars');
+    avatars.addEventListener('click', avatarClicked);
+});
+
 function restartGame() {
+    toggleModalAvatarSelection();
     nextEnemyRow = 1;
     handlingCollision = false;
     handlingFinishingEvent = false;
@@ -42,12 +56,15 @@ function restartGame() {
     while (allEnemies.length > 3) allEnemies.pop();
 
     powerUp.reset();
-
-    isGameOver = false;
 }
 
 function toggleModal() {
-    const modal = document.querySelector(".modal");
+    const modal = document.querySelector("#game-over-modal");
+    modal.classList.toggle("show-modal");
+}
+
+function toggleModalAvatarSelection() {
+    const modal = document.querySelector("#avatar-selection-modal");
     modal.classList.toggle("show-modal");
 }
 
@@ -71,7 +88,7 @@ class Enemy {
     }
 
     update(dt) {
-        if (!handlingCollision && !isGameOver) {
+        if (!handlingCollision && !isGamePaused) {
             this.x += this.speed * dt;
             if (this.x >= 505) this.resetPositionAndSpeed();
 
@@ -105,7 +122,7 @@ class Player {
 
     resetPosition() {
         this.x = 2 * 101;
-        this.y = (5 * 83 - 30);
+        this.y = (5 * 83) - 30;
     }
 
     looseHeart() {
@@ -113,7 +130,7 @@ class Player {
         showHearts();
 
         if (this.hearts === 0) {
-            isGameOver = true;
+            isGamePaused = true;
             const scoreElement = document.querySelector("#score");
             scoreElement.textContent = `You got ${score} points though. Well done!`;
             toggleModal();
@@ -128,7 +145,7 @@ class Player {
     }
 
     handleInput(direction) {
-        if (!handlingCollision && !handlingFinishingEvent && !isGameOver) {
+        if (!handlingCollision && !handlingFinishingEvent && !isGamePaused) {
             if (direction === 'left' && this.x > 0) {
                 this.x -= 101;
             } else if (direction === 'right' && this.x < 4 * 101) {
@@ -145,7 +162,7 @@ class Player {
                         player.resetPosition();
                     }, 400);
                 }
-            } else if (direction === 'down' && this.y < 5 * 83 - 30) {
+            } else if (direction === 'down' && this.y < ((5 * 83) - 30)) {
                 this.y += 83;
                 updateScore(-10);
             }
@@ -191,7 +208,7 @@ class PowerUp {
         this.x = -500;
         updateScore(this.points);
         setTimeout(() => {
-            if (!isGameOver) this.reset();
+            if (!isGamePaused) this.reset();
         }, 2000);
     }
 

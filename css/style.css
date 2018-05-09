@@ -49,19 +49,24 @@ body {
     border-radius: 1rem;
 }
 
-.hearts {
+.hearts, .avatars {
     padding: 0;
     margin: 0;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
-.hearts li {
+.hearts li, .avatars li {
     list-style: none;
 }
 
-.hearts li img {
+.hearts li img, .avatars li img {
     margin: 1rem 0 0;
+}
+
+.avatars li {
+    cursor: pointer;
 }
 
 /*

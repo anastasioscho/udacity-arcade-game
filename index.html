@@ -6,11 +6,22 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="modal">
+    <div id="game-over-modal" class="modal">
         <div class="modal-content">
             <h1>Sadly, you have been consumed by the swarm...</h1>
             <p id="score"></p>
             <button class="btn-restart" onclick="toggleModal(); restartGame()">Play again</button>
+        </div>
+    </div>
+    <div id="avatar-selection-modal" class="modal">
+        <div class="modal-content">
+            <h1>Choose your victim</h1>
+            <ul class="avatars">
+                <li><img src="images/boy-thumb.png" data-sprite="images/char-boy.png"></li>
+                <li><img src="images/cat-girl-thumb.png" data-sprite="images/char-cat-girl.png"></li>
+                <li><img src="images/horn-girl-thumb.png" data-sprite="images/char-horn-girl.png"></li>
+                <li><img src="images/pink-girl-thumb.png" data-sprite="images/char-pink-girl.png"></li>
+            </ul>
         </div>
     </div>
     <script src="js/resources.js"></script>
