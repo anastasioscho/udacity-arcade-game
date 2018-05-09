@@ -11,39 +11,33 @@ function generateRandomNumber(min, max) {
 function updateScore(newPoints, addition = true) {
     if (addition) score = score + newPoints < 0 ? 0 : score + newPoints;
     else score = newPoints;
-    const scoreElement = document.querySelector("#score-element");
+
+    const scoreElement = document.querySelector('#score-element');
     scoreElement.textContent = `Score:${score}`;
 }
 
 function showHearts() {
-    const firstHeartElement = document.querySelector("#first-heart");
-    const secondHeartElement = document.querySelector("#second-heart");
-    const thirdHeartElement = document.querySelector("#third-heart");
+    const firstHeartElement = document.querySelector('#first-heart');
+    const secondHeartElement = document.querySelector('#second-heart');
+    const thirdHeartElement = document.querySelector('#third-heart');
 
     if (player.hearts === 3) {
-        firstHeartElement.style.display = "list-item";
-        secondHeartElement.style.display = "list-item";
-        thirdHeartElement.style.display = "list-item";
-    } else if (player.hearts === 2) thirdHeartElement.style.display = "none";
-    else if (player.hearts === 1) secondHeartElement.style.display = "none";
-    else if (player.hearts === 0) firstHeartElement.style.display = "none";
+        firstHeartElement.style.display = 'list-item';
+        secondHeartElement.style.display = 'list-item';
+        thirdHeartElement.style.display = 'list-item';
+    } else if (player.hearts === 2) thirdHeartElement.style.display = 'none';
+    else if (player.hearts === 1) secondHeartElement.style.display = 'none';
+    else if (player.hearts === 0) firstHeartElement.style.display = 'none';
 }
 
 function avatarClicked(evt) {
     player.sprite = evt.target.dataset.sprite;
-    toggleModalAvatarSelection();
+    toggleAvatarSelectionModal();
     isGamePaused = false;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    restartGame();
-
-    const avatars = document.querySelector('.avatars');
-    avatars.addEventListener('click', avatarClicked);
-});
-
 function restartGame() {
-    toggleModalAvatarSelection();
+    toggleAvatarSelectionModal();
     nextEnemyRow = 1;
     handlingCollision = false;
     handlingFinishingEvent = false;
@@ -58,14 +52,14 @@ function restartGame() {
     powerUp.reset();
 }
 
-function toggleModal() {
-    const modal = document.querySelector("#game-over-modal");
-    modal.classList.toggle("show-modal");
+function toggleGameOverModal() {
+    const modal = document.querySelector('#game-over-modal');
+    modal.classList.toggle('show-modal');
 }
 
-function toggleModalAvatarSelection() {
-    const modal = document.querySelector("#avatar-selection-modal");
-    modal.classList.toggle("show-modal");
+function toggleAvatarSelectionModal() {
+    const modal = document.querySelector('#avatar-selection-modal');
+    modal.classList.toggle('show-modal');
 }
 
 class Enemy {
@@ -136,9 +130,9 @@ class Player {
 
         if (this.hearts === 0) {
             isGamePaused = true;
-            const scoreElement = document.querySelector("#score");
+            const scoreElement = document.querySelector('#score');
             scoreElement.textContent = `You got ${score} points though. Well done!`;
-            toggleModal();
+            toggleGameOverModal();
         }
     }
 
@@ -233,6 +227,13 @@ class PowerUp {
 const powerUp = new PowerUp;
 const player = new Player;
 const allEnemies = [new Enemy, new Enemy, new Enemy];
+
+document.addEventListener('DOMContentLoaded', function () {
+    restartGame();
+
+    const avatars = document.querySelector('.avatars');
+    avatars.addEventListener('click', avatarClicked);
+});
 
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
